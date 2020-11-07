@@ -52,7 +52,8 @@ jobs:
           
           
       - name: Upload bottles
-        uses: actions/upload-artifact@v1
+        if: always() && steps.bottles.outputs.count > 0
+        uses: actions/upload-artifact@main
         with:
           name: bottles
-          path: ${{runner.temp}}/bottles
+          path: bottles
