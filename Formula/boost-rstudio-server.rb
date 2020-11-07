@@ -5,12 +5,11 @@ class BoostRstudioServer < Formula
   sha256 "8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406"
   head "https://github.com/boostorg/boost.git"
 
-  # bottle do
-  #   root_url "https://linuxbrew.bintray.com/bottles-base"
-  #   cellar :any_skip_relocation
-  #   sha256 "a6c23ff218b8d59b7ae4eb1640a703a74453cd604e723b7bedf75a957f98c006" => :catalina
-  #   sha256 "7a0b1493c1c28d4eefe193b45cc818fbf580162a98e123a1d09c735429974eb2" => :x86_64_linux
-  # end
+  bottle do
+    root_url "https://brew-rtools.bintray.com/bottles-rtools"
+    cellar :any_skip_relocation
+    sha256 "a6c23ff218b8d59b7ae4eb1640a703a74453cd604e723b7bedf75a957f98c006" => :catalina
+  end
 
   keg_only :versioned_formula
 

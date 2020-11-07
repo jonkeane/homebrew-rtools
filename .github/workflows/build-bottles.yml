@@ -4,13 +4,14 @@ on: pull_request
 
 env:
   HOMEBREW_NO_ANALYTICS: 1
+  HOMEBREW_NO_AUTO_UPDATE: 1
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 jobs:
   build-macos-bottles:
     runs-on: macos-latest
     steps:
-        
-        
+
+
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
@@ -23,12 +24,14 @@ jobs:
         run: |
           mkdir bottles
           cd bottles
-          brew test-bot --only-formulae
+          brew test-bot --only-formulae --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools
+
       - name: Output brew test-bot --only-formulae failures
         if: always()
         run: |
           cat bottles/steps_output.txt
           rm bottles/steps_output.txt
+
       - name: Upload logs
         if: failure()
         uses: actions/upload-artifact@main
@@ -41,6 +44,7 @@ jobs:
         run: |
           rm -rvf bottles/logs
           rm -rvf bottles/home
+
       - name: Count bottles
         id: bottles
         if: always()
@@ -49,8 +53,7 @@ jobs:
           count=$(ls *.json | wc -l | xargs echo -n)
           echo "$count bottles"
           echo "::set-output name=count::$count"
-          
-          
+
       - name: Upload bottles
         if: always() && steps.bottles.outputs.count > 0
         uses: actions/upload-artifact@main
