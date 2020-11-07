@@ -10,12 +10,12 @@ class RstudioServer < Formula
     # upstream has this patch already, but without it building against R 4.0 fails
     patch :p1 do
       url "https://github.com/rstudio/rstudio/commit/3fb2397.patch?full_index=1"
-      sha256 "4f7299400c584f6262a7ecdde718e9b72767e7aa4ba6762929d3ec3db773c6c7"
+      sha256 "a537578bb053cd4832c94f8bed60c1b1545ee492367e122b4ad38b28fe736df3"
     end
   end
 
   bottle do
-    root_url "https://linuxbrew.bintray.com/bottles-base"
+    root_url "https://brew-rtools.bintray.com/bottles-rtools"
     cellar :any
     sha256 "255ef12e823fc4f2a3e4c3f673cda58cedbd70e15a002ea63d8921a1fb839a85" => :catalina
   end
