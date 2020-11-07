@@ -1,6 +1,6 @@
 name: Build bottles
 
-on: [push, pull_request]
+on: pull_request
 
 env:
   HOMEBREW_NO_ANALYTICS: 1
@@ -13,6 +13,7 @@ jobs:
     container:
       image: homebrew/ubuntu16.04
     steps:
+        
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
