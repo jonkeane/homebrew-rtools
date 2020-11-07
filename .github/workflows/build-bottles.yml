@@ -12,16 +12,37 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: homebrew/ubuntu16.04
-    steps:
-      - uses: actions/checkout@master
-      - name: Build bottles
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - run: brew test-bot --only-cleanup-before
+
+      - run: brew test-bot --only-setup
+
+      - name: Run brew test-bot --only-formulae
         run: |
-          mkdir -p "$(dirname $(brew --repo ${{github.repository}}))"
-          cp -a "$GITHUB_WORKSPACE" "$(brew --repo ${{github.repository}})"
-          mkdir ~/bottles
-          cd ~/bottles
-          brew test-bot --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools --git-name=LinuxbrewTestBot --git-email=testbot@linuxbrew.sh
-          cp -a ~/bottles $RUNNER_TEMP/
+          mkdir bottles
+          cd bottles
+          brew test-bot --only-formulae
+      - name: Output brew test-bot --only-formulae failures
+        if: always()
+        run: |
+          cat bottles/steps_output.txt
+          rm bottles/steps_output.txt
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@main
+        with:
+          name: logs (${{ matrix.version }})
+          path: bottles/logs
+
+      - name: Delete logs and home
+        if: always()
+        run: |
+          rm -rvf bottles/logs
+          rm -rvf bottles/home
+          
       - name: Upload bottles
         uses: actions/upload-artifact@v1
         with:
