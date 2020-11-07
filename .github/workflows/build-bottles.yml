@@ -4,13 +4,12 @@ on: pull_request
 
 env:
   HOMEBREW_NO_ANALYTICS: 1
-  HOMEBREW_FORCE_HOMEBREW_ON_LINUX: 1
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 jobs:
-  build-linux-bottles:
-    runs-on: ubuntu-latest
-    container:
-      image: homebrew/ubuntu16.04
+  build-macos-bottles:
+    runs-on: macos-latest
     steps:
+        
         
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -42,26 +41,16 @@ jobs:
         run: |
           rm -rvf bottles/logs
           rm -rvf bottles/home
-          
-      - name: Upload bottles
-        uses: actions/upload-artifact@v1
-        with:
-          name: bottles
-          path: ${{runner.temp}}/bottles
-  build-macos-bottles:
-    runs-on: macos-latest
-    steps:
-      - name: Update Homebrew
-        run: brew update-reset
-      - uses: actions/checkout@master
-      - name: Build bottles
+      - name: Count bottles
+        id: bottles
+        if: always()
         run: |
-          mkdir -p "$(dirname $(brew --repo ${{github.repository}}))"
-          cp -a "$GITHUB_WORKSPACE" "$(brew --repo ${{github.repository}})"
-          mkdir ~/bottles
-          cd ~/bottles
-          brew test-bot --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools --git-name=LinuxbrewTestBot --git-email=testbot@linuxbrew.sh
-          cp -a ~/bottles $RUNNER_TEMP/
+          cd bottles
+          count=$(ls *.json | wc -l | xargs echo -n)
+          echo "$count bottles"
+          echo "::set-output name=count::$count"
+          
+          
       - name: Upload bottles
         uses: actions/upload-artifact@v1
         with:
