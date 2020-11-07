@@ -20,7 +20,7 @@ jobs:
           cp -a "$GITHUB_WORKSPACE" "$(brew --repo ${{github.repository}})"
           mkdir ~/bottles
           cd ~/bottles
-          brew test-bot --bintray-org=linuxbrew --root-url=https://linuxbrew.bintray.com/bottles-base --git-name=LinuxbrewTestBot --git-email=testbot@linuxbrew.sh
+          brew test-bot --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools --git-name=LinuxbrewTestBot --git-email=testbot@linuxbrew.sh
           cp -a ~/bottles $RUNNER_TEMP/
       - name: Upload bottles
         uses: actions/upload-artifact@v1
@@ -39,7 +39,7 @@ jobs:
           cp -a "$GITHUB_WORKSPACE" "$(brew --repo ${{github.repository}})"
           mkdir ~/bottles
           cd ~/bottles
-          brew test-bot --bintray-org=linuxbrew --root-url=https://linuxbrew.bintray.com/bottles-base --git-name=LinuxbrewTestBot --git-email=testbot@linuxbrew.sh
+          brew test-bot --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools --git-name=LinuxbrewTestBot --git-email=testbot@linuxbrew.sh
           cp -a ~/bottles $RUNNER_TEMP/
       - name: Upload bottles
         uses: actions/upload-artifact@v1

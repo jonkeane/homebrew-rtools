@@ -9,7 +9,7 @@ class RstudioServer < Formula
     patch :DATA
     # upstream has this patch already, but without it building against R 4.0 fails
     patch :p1 do
-      url "https://github.com/rstudio/rstudio/commit/3fb2397.patch"
+      url "https://github.com/rstudio/rstudio/commit/3fb2397.patch?full_index=1"
       sha256 "4f7299400c584f6262a7ecdde718e9b72767e7aa4ba6762929d3ec3db773c6c7"
     end
   end
@@ -38,7 +38,7 @@ class RstudioServer < Formula
   end
   depends_on "cmake" => :build
   depends_on "gcc" => :build
-  depends_on "java" => ["1.8", :build]
+  depends_on "openjdk" => ["1.8", :build]
   depends_on "openssl@1.1"
   depends_on "r" => :recommended
 
