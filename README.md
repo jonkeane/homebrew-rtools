@@ -1,6 +1,6 @@
 # jonkeane/rtools
 
-Science formulae for the [Linuxbrew](http://linuxbrew.sh) and [Homebrew](https://brew.sh) package managers.
+R tooling formulae for the [Homebrew](https://brew.sh) package manager.
 
 ## How do I install a formula?
 
@@ -14,6 +14,12 @@ or
 ```sh
 brew install brewsci/base/FORMULA
 ```
+
+## Updating formulae
+
+To update a formula, make a separate branch and PR. Github Actions will run tests on the branch. Once the PR is good to go, the `Publish and commit bottles` action (with the correct PR filled in) will take the bottles built during the tests, publish them to bintray, update the bottles section of the formula, and merge the PR into the main branch.
+
+The action `Dispatch build bottle` will both build and upload the bottles and then merge the branch into the main branch. To use this action, supply the macos versoin (in the form of `macos-10.15`), name of one formula, issue/PR number, and if the build hsould be uploaded to bintray. 
 
 ## Troubleshooting
 
