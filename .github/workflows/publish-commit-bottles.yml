@@ -38,7 +38,7 @@ jobs:
           HOMEBREW_GITHUB_API_TOKEN: ${{secrets.HOMEBREW_GITHUB_API_TOKEN}}
           HOMEBREW_BINTRAY_USER: jonkeane
           HOMEBREW_BINTRAY_KEY: ${{secrets.HOMEBREW_BINTRAY_KEY}}
-        run: brew pr-pull --debug --keep-old --tap=jonkeane/rtools --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools ${{github.event.inputs.args}} ${{github.event.inputs.pull_request}}
+        run: brew pr-pull --debug --keep-old --workflow=build-bottles.yml --tap=jonkeane/rtools --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools ${{github.event.inputs.args}} ${{github.event.inputs.pull_request}}
 
       - name: Push commits
         uses: Homebrew/actions/git-try-push@master
