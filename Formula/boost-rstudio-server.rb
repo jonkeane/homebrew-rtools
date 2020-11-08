@@ -1,5 +1,5 @@
 class BoostRstudioServer < Formula
-  desc "Collection of portable C++ source libraries "
+  desc "Collection of portable C++ source libraries"
   homepage "https://www.boost.org/"
   url "https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.bz2"
   sha256 "8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406"
@@ -7,8 +7,8 @@ class BoostRstudioServer < Formula
 
   bottle do
     root_url "https://brew-rtools.bintray.com/bottles-rtools"
-    cellar :any_skip_relocation
-    sha256 "a6c23ff218b8d59b7ae4eb1640a703a74453cd604e723b7bedf75a957f98c006" => :catalina
+    cellar :any
+    sha256 "8c5bc4daedf6fb33a61d717559808e2244404c504527ab064765cdcfb344fcd2" => :catalina
   end
 
   keg_only :versioned_formula
