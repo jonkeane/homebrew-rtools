@@ -18,6 +18,7 @@ on:
         required: false
 
 env:
+  HOMEBREW_NO_ANALYTICS: 1
   HOMEBREW_NO_AUTO_UPDATE: 1
 
 jobs:
@@ -26,7 +27,6 @@ jobs:
     timeout-minutes: 4320
     env:
       PATH: '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
-      GITHUB_ACTIONS_HOMEBREW_SELF_HOSTED: 1
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     steps:
       - name: Set up Homebrew
