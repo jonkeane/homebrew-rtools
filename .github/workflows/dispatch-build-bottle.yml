@@ -18,8 +18,7 @@ on:
         required: false
 
 env:
-  HOMEBREW_DEVELOPER: 1
-  HOMEBREW_GITHUB_ACTIONS: 1
+  HOMEBREW_NO_ANALYTICS: 1
   HOMEBREW_NO_AUTO_UPDATE: 1
 
 jobs:
@@ -28,7 +27,6 @@ jobs:
     timeout-minutes: 4320
     env:
       PATH: '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
-      GITHUB_ACTIONS_HOMEBREW_SELF_HOSTED: 1
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     steps:
       - name: Set up Homebrew
@@ -43,7 +41,7 @@ jobs:
         run: |
           mkdir bottles
           cd bottles
-          brew test-bot --only-formulae ${{github.event.inputs.formula}}
+          brew test-bot --only-formulae ${{github.event.inputs.formula}} --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools --verbose
       - name: Output brew test-bot --only-formulae failures
         if: always()
         run: |
@@ -103,10 +101,12 @@ jobs:
         env:
           HOMEBREW_BINTRAY_USER: jonkeane
           HOMEBREW_BINTRAY_KEY: ${{secrets.HOMEBREW_BINTRAY_KEY}}
-        run: brew pr-upload --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools --verbose --keep-old
+        run: brew pr-upload --keep-old --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools --verbose
 
       - name: Push commits
         uses: Homebrew/actions/git-try-push@master
+        with:
+          branch: main
 
       - name: Post comment on failure
         if: failure() && github.event.inputs.issue

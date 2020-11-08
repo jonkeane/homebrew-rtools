@@ -1,6 +1,6 @@
 name: Build bottles
 
-on: [push, pull_request]
+on: pull_request
 
 env:
   HOMEBREW_NO_ANALYTICS: 1
