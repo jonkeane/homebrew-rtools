@@ -105,6 +105,8 @@ jobs:
 
       - name: Push commits
         uses: Homebrew/actions/git-try-push@master
+        with:
+          branch: main
 
       - name: Post comment on failure
         if: failure() && github.event.inputs.issue

@@ -44,6 +44,7 @@ jobs:
         uses: Homebrew/actions/git-try-push@master
         with:
           token: ${{secrets.HOMEBREW_GITHUB_API_TOKEN}}
+          branch: main
 
       - name: Post comment on failure
         if: ${{!success()}}
