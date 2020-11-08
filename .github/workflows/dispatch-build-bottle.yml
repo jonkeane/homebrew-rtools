@@ -41,7 +41,7 @@ jobs:
         run: |
           mkdir bottles
           cd bottles
-          brew test-bot --only-formulae ${{github.event.inputs.formula}}
+          brew test-bot --only-formulae ${{github.event.inputs.formula}} --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools --verbose
       - name: Output brew test-bot --only-formulae failures
         if: always()
         run: |
