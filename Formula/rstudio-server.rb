@@ -1,5 +1,5 @@
 class RstudioServer < Formula
-  desc "Integrated development environment (IDE) for R "
+  desc "Integrated development environment (IDE) for R"
   homepage "https://www.rstudio.com"
   head "https://github.com/rstudio/rstudio.git"
   stable do
