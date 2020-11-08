@@ -6,6 +6,7 @@ on:
       macos:
         description: macOS version
         required: true
+        default: 'macos-10.15'
       formula:
         description: Formula name
         required: true
