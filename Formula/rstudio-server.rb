@@ -3,15 +3,15 @@ class RstudioServer < Formula
   homepage "https://www.rstudio.com"
   head "https://github.com/rstudio/rstudio.git"
   stable do
-    url "https://github.com/rstudio/rstudio/archive/v1.3.959.tar.gz"
-    sha256 "5c89fe18e3d5ead0e7921c88e5fb42ed816823238e84135f5e9e3a364d35fcc1"
+    url "https://github.com/rstudio/rstudio/archive/v1.4.1103.tar.gz"
+    sha256 "e448aaaf7ac7f4fd97197250762bfd28195c71abfd67db6f952463dea552be4c"
     # upstream has this patch already but it is too big to be merged
-    patch :DATA
-    # upstream has this patch already, but without it building against R 4.0 fails
-    patch :p1 do
-      url "https://github.com/rstudio/rstudio/commit/3fb2397.patch?full_index=1"
-      sha256 "a537578bb053cd4832c94f8bed60c1b1545ee492367e122b4ad38b28fe736df3"
-    end
+    # patch :DATA
+    # # upstream has this patch already, but without it building against R 4.0 fails
+    # patch :p1 do
+    #   url "https://github.com/rstudio/rstudio/commit/3fb2397.patch?full_index=1"
+    #   sha256 "a537578bb053cd4832c94f8bed60c1b1545ee492367e122b4ad38b28fe736df3"
+    # end
   end
 
   bottle do
@@ -39,6 +39,7 @@ class RstudioServer < Formula
   depends_on "gcc" => :build
   depends_on "openjdk" => :build
   depends_on "openssl@1.1"
+  depends_on "postgresql" => :recommended
   depends_on "r" => :recommended
 
   resource "dictionaries" do
@@ -179,16 +180,3 @@ class RstudioServer < Formula
     system "#{bin}/rstudio-server", "version"
   end
 end
-
-
-__END__
-diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
-index af791506eb..5845bdf1a0 100644
---- a/src/cpp/CMakeLists.txt
-+++ b/src/cpp/CMakeLists.txt
-@@ -317,0 +318 @@ endif()
-+if (NOT DEFINED RSTUDIO_CRASHPAD_ENABLED OR RSTUDIO_CRASHPAD_ENABLED)
-@@ -338,0 +340 @@ endif()
-+endif()
-@@ -527 +528,0 @@ endif()
--
