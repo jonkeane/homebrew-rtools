@@ -1,4 +1,4 @@
-class SociRStudioServer < Formula
+class SociRstudioServer < Formula
   desc "Database access library for C++"
   homepage "https://soci.sourceforge.io/"
   url "https://downloads.sourceforge.net/project/soci/soci/soci-4.0.1/soci-4.0.1.zip"
