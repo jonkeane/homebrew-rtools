@@ -101,7 +101,7 @@ jobs:
         env:
           HOMEBREW_BINTRAY_USER: jonkeane
           HOMEBREW_BINTRAY_KEY: ${{secrets.HOMEBREW_BINTRAY_KEY}}
-        run: brew pr-upload --keep-old --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools --verbose
+        run: brew pr-upload --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools --verbose
 
       - name: Push commits
         uses: Homebrew/actions/git-try-push@master
