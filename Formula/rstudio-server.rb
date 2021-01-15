@@ -7,11 +7,6 @@ class RstudioServer < Formula
     sha256 "e448aaaf7ac7f4fd97197250762bfd28195c71abfd67db6f952463dea552be4c"
     # patch the soci paths to use the brew-installed ones.
     patch :DATA
-    # # upstream has this patch already, but without it building against R 4.0 fails
-    # patch :p1 do
-    #   url "https://github.com/rstudio/rstudio/commit/3fb2397.patch?full_index=1"
-    #   sha256 "a537578bb053cd4832c94f8bed60c1b1545ee492367e122b4ad38b28fe736df3"
-    # end
   end
 
   bottle do
@@ -68,7 +63,7 @@ class RstudioServer < Formula
   if OS.linux?
     resource "node" do
       url "https://nodejs.org/dist/v10.19.0/node-v10.19.0-linux-x64.tar.gz"
-      sha256 ""
+      sha256 "36d90bc58f0418f31dceda5b18eb260019fcc91e59b0820ffa66700772a8804b"
     end
   elsif OS.mac?
     resource "node" do
@@ -111,8 +106,6 @@ class RstudioServer < Formula
 
     resource("pandoc").stage do
       (common_dir/"pandoc/2.11.2/").install "bin/pandoc"
-      # add * after pandoc here? ^^^
-      # (common_dir/"pandoc/2.11.2/").install "bin/pandoc-citeproc"
     end
 
     mkdir "build" do
@@ -123,7 +116,8 @@ class RstudioServer < Formula
       args << "-DCMAKE_INSTALL_PREFIX=#{prefix}/rstudio-server"
       args << "-DCMAKE_CXX_FLAGS=-I#{Formula["openssl"].opt_include}"
       args << "-DRSTUDIO_CRASHPAD_ENABLED=0"
-      args << "-DRSTUDIO_USE_SYSTEM_SOCI=1"
+      # this is the path to the brew-installed soci (see the patch at the end)
+      args << "-DBREW_SOCI=#{Formula["soci-rstudio-server"].lib}"
       args << "-DCMAKE_OSX_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk" if OS.mac?
 
       linkerflags = "-DCMAKE_EXE_LINKER_FLAGS=-L#{Formula["openssl"].opt_lib}"
@@ -197,23 +191,19 @@ class RstudioServer < Formula
   end
 end
 
-# TODO: how to fix such that this connects to proper cellar paths
+
 __END__
 diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
-index df54994..6eb35c5 100644
+index df54994..927d357 100644
 --- a/src/cpp/CMakeLists.txt
 +++ b/src/cpp/CMakeLists.txt
-@@ -409,9 +409,9 @@ if(UNIX)
+@@ -405,7 +405,7 @@ endif()
+ 
+ # find SOCI libraries
+ if(UNIX)
+-   set(SOCI_LIBRARY_DIR "${RSTUDIO_TOOLS_SOCI}/build/lib")
++   set(SOCI_LIBRARY_DIR "${BREW_SOCI}")
     if(NOT APPLE AND RSTUDIO_USE_SYSTEM_SOCI)
        set(SOCI_LIBRARY_DIR "/usr/lib")
     endif()
--   find_library(SOCI_CORE_LIB NAMES "libsoci_core.a" "soci_core" PATHS "${SOCI_LIBRARY_DIR}" NO_DEFAULT_PATH)
--   find_library(SOCI_SQLITE_LIB NAMES "libsoci_sqlite3.a" "soci_sqlite3" PATHS "${SOCI_LIBRARY_DIR}" NO_DEFAULT_PATH)
--   find_library(SOCI_POSTGRESQL_LIB NAMES "libsoci_postgresql.a" "soci_postgresql" PATHS "${SOCI_LIBRARY_DIR}" NO_DEFAULT_PATH)
-+   find_library(SOCI_CORE_LIB NAMES "libsoci_core.a" "soci_core" PATHS "/usr/local/Cellar/soci-rstudio-server/4.0.0/lib" NO_DEFAULT_PATH)
-+   find_library(SOCI_SQLITE_LIB NAMES "libsoci_sqlite3.a" "soci_sqlite3" PATHS "/usr/local/Cellar/soci-rstudio-server/4.0.0/lib" NO_DEFAULT_PATH)
-+   find_library(SOCI_POSTGRESQL_LIB NAMES "libsoci_postgresql.a" "soci_postgresql" PATHS "/usr/local/Cellar/soci-rstudio-server/4.0.0/lib" NO_DEFAULT_PATH)
-    find_library(DL_LIB "dl")
-    find_library(SQLITE_LIB "sqlite3")
-    get_filename_component(SQLITE_LIB "${SQLITE_LIB}" REALPATH)
 -

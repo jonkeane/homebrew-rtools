@@ -4,12 +4,6 @@ class SociRstudioServer < Formula
   url "https://downloads.sourceforge.net/project/soci/soci/soci-4.0.0/soci-4.0.0.zip"
   sha256 "c7fffa74867182d9559e20c6e8d291936c3bd8cfa8c7d0c13bb2eeb09e0f318b"
   license "BSL-1.0"
-  
-  # # patch session to soci::session
-  # patch :p1 do
-  #   url "https://github.com/SOCI/soci/commit/88e7249f4ccbf0d8b268b05c3ebe7af2d054b227.patch?full_index=1"
-  #   sha256 "56dbc41b09e77a1cff915223eeec80bd0c949c216037cdc1a33c51721ea2a85c"
-  # end
   livecheck do
     url :stable
   end
