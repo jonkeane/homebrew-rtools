@@ -96,6 +96,8 @@ jobs:
 
       - name: Setup git
         uses: Homebrew/actions/git-user-config@master
+        with:
+          username: BrewActionsBot
 
       - name: Upload and publish bottles on Bintray
         env:
