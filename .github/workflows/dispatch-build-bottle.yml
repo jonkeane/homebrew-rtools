@@ -84,7 +84,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: bottle
     if: github.event.inputs.upload
-    steps:
+    steps:    
+      - uses: actions/checkout@v2
+
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
@@ -96,17 +98,20 @@ jobs:
 
       - name: Setup git
         uses: Homebrew/actions/git-user-config@master
+        with:
+          username: jonkeane
 
       - name: Upload and publish bottles on Bintray
         env:
           HOMEBREW_BINTRAY_USER: jonkeane
           HOMEBREW_BINTRAY_KEY: ${{secrets.HOMEBREW_BINTRAY_KEY}}
-        run: brew pr-upload --keep-old --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools --verbose
+        run: brew pr-upload --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools --verbose
 
       - name: Push commits
         uses: Homebrew/actions/git-try-push@master
         with:
           branch: main
+          token: ${{secrets.HOMEBREW_GITHUB_API_TOKEN}}
 
       - name: Post comment on failure
         if: failure() && github.event.inputs.issue
