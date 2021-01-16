@@ -9,7 +9,7 @@ class SociRstudioServer < Formula
   end
 
   bottle do
-    root_url "https://brew-rtools.bintray.com/bottles-rtools"
+    root_url "https://dl.bintray.com/brew-rtools/bottles-rtools"
     cellar :any
     sha256 "1110442edee6672ede9b93dccef0a933508d6aa9936ad7d7c82b9429965092ff" => :big_sur
     sha256 "367f4d37091b11f2e63e220361f9344622a93f8c961122901889c5ef132fb0ec" => :catalina
