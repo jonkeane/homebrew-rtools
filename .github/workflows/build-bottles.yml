@@ -20,9 +20,6 @@ jobs:
 
       - run: brew test-bot --only-setup
 
-      - name: Unlink the system boost
-        run: ls -lah /usr/local/lib/cmake/
-
       - name: Run brew test-bot --only-formulae
         run: |
           mkdir bottles
