@@ -110,7 +110,7 @@ class RstudioServer < Formula
 
     mkdir "build" do
       args = ["-DRSTUDIO_TARGET=Server", "-DCMAKE_BUILD_TYPE=Release"]
-      args << "-DRSTUDIO_USE_SYSTEM_BOOST=Yes"
+      args << "-DRSTUDIO_USE_SYSTEM_BOOST=No"
       args << "-DBoost_NO_SYSTEM_PATHS=On"
       args << "-DBOOST_ROOT=#{Formula["boost-rstudio-server"].opt_prefix}"
       args << "-DCMAKE_INSTALL_PREFIX=#{prefix}/rstudio-server"
