@@ -16,6 +16,9 @@ jobs:
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - run: brew test-bot --only-cleanup-before
 
       - run: brew test-bot --only-setup
