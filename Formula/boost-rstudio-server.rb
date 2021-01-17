@@ -8,7 +8,7 @@ class BoostRstudioServer < Formula
   bottle do
     root_url "https://brew-rtools.bintray.com/bottles-rtools"
     cellar :any
-    sha256 "d6925782e307d5098f2bef67dead5174ac79343a14af74df4a7ac6d9e0c2ddd8" => :catalina
+    sha256 "de579068de0991086410204ffbdfb180c900c16faa48734cb13753a936017e65" => :catalina
   end
 
   keg_only :versioned_formula
