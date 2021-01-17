@@ -110,7 +110,7 @@ class RstudioServer < Formula
 
     mkdir "build" do
       args = ["-DRSTUDIO_TARGET=Server", "-DCMAKE_BUILD_TYPE=Release"]
-      args << "-DRSTUDIO_USE_SYSTEM_BOOST=No"
+      args << "-DRSTUDIO_USE_SYSTEM_BOOST=Yes"
       args << "-DBoost_NO_SYSTEM_PATHS=On"
       args << "-DBOOST_ROOT=#{Formula["boost-rstudio-server"].opt_prefix}"
       args << "-DCMAKE_INSTALL_PREFIX=#{prefix}/rstudio-server"
@@ -118,7 +118,6 @@ class RstudioServer < Formula
       args << "-DRSTUDIO_CRASHPAD_ENABLED=0"
       # this is the path to the brew-installed soci (see the patch at the end)
       args << "-DBREW_SOCI=#{Formula["soci-rstudio-server"].lib}"
-      args << "-DBOOST_RSTUDIO_BREW_LIB=#{Formula["boost-rstudio-server"].lib}"
       args << "-DCMAKE_OSX_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk" if OS.mac?
 
       linkerflags = "-DCMAKE_EXE_LINKER_FLAGS=-L#{Formula["openssl"].opt_lib}"
@@ -195,21 +194,9 @@ end
 
 __END__
 diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
-index df54994..e512cb9 100644
+index df54994..927d357 100644
 --- a/src/cpp/CMakeLists.txt
 +++ b/src/cpp/CMakeLists.txt
-@@ -225,9 +225,9 @@ list(APPEND BOOST_LIBS
- # UNIX BOOST
- if(UNIX)
-    # prefer static link to our custom built version
--   set(RSTUDIO_TOOLS_BOOST /opt/rstudio-tools/boost/boost_1_69_0)
-+   set(RSTUDIO_TOOLS_BOOST "${BOOST_RSTUDIO_BREW_LIB}")
-    if(NOT RSTUDIO_USE_SYSTEM_BOOST AND EXISTS ${RSTUDIO_TOOLS_BOOST})
--      add_definitions(-DRSTUDIO_BOOST_NAMESPACE=rstudio_boost)
-+      add_definitions(-DRSTUDIO_BOOST_NAMESPACE=boost)
-
-       # find headers
-       set(Boost_USE_STATIC_LIBS ON)
 @@ -405,7 +405,7 @@ endif()
 
  # find SOCI libraries
@@ -219,8 +206,4 @@ index df54994..e512cb9 100644
     if(NOT APPLE AND RSTUDIO_USE_SYSTEM_SOCI)
        set(SOCI_LIBRARY_DIR "/usr/lib")
     endif()
-@@ -622,4 +622,3 @@ else()
-    endif()
-
- endif()
 -
