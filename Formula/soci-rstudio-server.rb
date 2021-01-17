@@ -51,6 +51,8 @@ class SociRstudioServer < Formula
         soci::session sql(backEnd, connectString);
       }
     EOS
+    ENV["BOOST_ROOT"] = "#{Formula["boost-rstudio-server"].opt_prefix}"
+
     system ENV.cxx, "-o", "test", "test.cxx", "-std=c++11", "-L#{lib}", "-lsoci_core", "-lsoci_empty"
     system "./test"
   end
