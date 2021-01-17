@@ -59,7 +59,7 @@ class RstudioServer < Formula
       sha256 "e256ad5ae298fa303f55d48fd40b678367a6f34108a037ce5d76bdc6cfca6258"
     end
   end
-  
+
   if OS.linux?
     resource "node" do
       url "https://nodejs.org/dist/v10.19.0/node-v10.19.0-linux-x64.tar.gz"
@@ -205,10 +205,11 @@ index df54994..53038f5 100644
 -   set(RSTUDIO_TOOLS_BOOST /opt/rstudio-tools/boost/boost_1_69_0)
 +   set(RSTUDIO_TOOLS_BOOST "${BOOST_RSTUDIO_BREW_LIB}")
     if(NOT RSTUDIO_USE_SYSTEM_BOOST AND EXISTS ${RSTUDIO_TOOLS_BOOST})
-       add_definitions(-DRSTUDIO_BOOST_NAMESPACE=rstudio_boost)
- 
+-     add_definitions(-DRSTUDIO_BOOST_NAMESPACE=rstudio_boost)
++     add_definitions(-DRSTUDIO_BOOST_NAMESPACE=boost)
+
 @@ -405,7 +405,7 @@ endif()
- 
+
  # find SOCI libraries
  if(UNIX)
 -   set(SOCI_LIBRARY_DIR "${RSTUDIO_TOOLS_SOCI}/build/lib")
