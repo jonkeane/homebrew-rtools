@@ -195,19 +195,21 @@ end
 
 __END__
 diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
-index df54994..53038f5 100644
+index df54994..e512cb9 100644
 --- a/src/cpp/CMakeLists.txt
 +++ b/src/cpp/CMakeLists.txt
-@@ -225,7 +225,7 @@ list(APPEND BOOST_LIBS
+@@ -225,9 +225,9 @@ list(APPEND BOOST_LIBS
  # UNIX BOOST
  if(UNIX)
     # prefer static link to our custom built version
 -   set(RSTUDIO_TOOLS_BOOST /opt/rstudio-tools/boost/boost_1_69_0)
 +   set(RSTUDIO_TOOLS_BOOST "${BOOST_RSTUDIO_BREW_LIB}")
     if(NOT RSTUDIO_USE_SYSTEM_BOOST AND EXISTS ${RSTUDIO_TOOLS_BOOST})
--     add_definitions(-DRSTUDIO_BOOST_NAMESPACE=rstudio_boost)
-+     add_definitions(-DRSTUDIO_BOOST_NAMESPACE=boost)
+-      add_definitions(-DRSTUDIO_BOOST_NAMESPACE=rstudio_boost)
++      add_definitions(-DRSTUDIO_BOOST_NAMESPACE=boost)
 
+       # find headers
+       set(Boost_USE_STATIC_LIBS ON)
 @@ -405,7 +405,7 @@ endif()
 
  # find SOCI libraries
@@ -217,4 +219,8 @@ index df54994..53038f5 100644
     if(NOT APPLE AND RSTUDIO_USE_SYSTEM_SOCI)
        set(SOCI_LIBRARY_DIR "/usr/lib")
     endif()
+@@ -622,4 +622,3 @@ else()
+    endif()
+
+ endif()
 -
