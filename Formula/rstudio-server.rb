@@ -28,7 +28,7 @@ class RstudioServer < Formula
   if OS.linux?
     depends_on "boost-rstudio-server"
   elsif OS.mac?
-    depends_on "boost-rstudio-server" => :build
+    depends_on "boost-rstudio-server"
   end
   depends_on "cmake" => :build
   depends_on "gcc" => :build
@@ -119,7 +119,7 @@ class RstudioServer < Formula
       args << "-DRSTUDIO_CRASHPAD_ENABLED=0"
       # this is the path to the brew-installed soci (see the patch at the end)
       args << "-DBREW_SOCI=#{Formula["soci-rstudio-server"].lib}"
-      args << "-DCMAKE_OSX_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk" if OS.mac?
+      # args << "-DCMAKE_OSX_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk" if OS.mac?
 
       linkerflags = "-DCMAKE_EXE_LINKER_FLAGS=-L#{Formula["openssl"].opt_lib}"
       linkerflags += " -L#{Formula["linux-pam"].opt_lib}" if OS.linux? && (build.with? "linux-pam")
