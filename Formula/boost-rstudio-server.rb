@@ -6,7 +6,7 @@ class BoostRstudioServer < Formula
   head "https://github.com/boostorg/boost.git"
 
   bottle do
-    root_url "https://brew-rtools.bintray.com/bottles-rtools"
+    root_url "https://dl.bintray.com/brew-rtools/bottles-rtools"
     cellar :any
     sha256 "de579068de0991086410204ffbdfb180c900c16faa48734cb13753a936017e65" => :catalina
   end
