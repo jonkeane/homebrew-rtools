@@ -34,21 +34,21 @@ class SociRstudioServer < Formula
     end
   end
 
-  # test do
-  #   (testpath/"test.cxx").write <<~EOS
-  #     #include "soci/soci.h"
-  #     #include "soci/empty/soci-empty.h"
-  #     #include <string>
-  #     using namespace soci;
-  #     std::string connectString = "";
-  #     backend_factory const &backEnd = *soci::factory_empty();
-  #     int main(int argc, char* argv[])
-  #     {
-  #       soci::session sql(backEnd, connectString);
-  #     }
-  #   EOS
-  #
-  #   system ENV.cxx, "-o", "test", "test.cxx", "-std=c++11", "-L#{lib}", "-lsoci_core", "-lsoci_empty"
-  #   system "./test"
-  # end
+  test do
+    (testpath/"test.cxx").write <<~EOS
+      #include "soci/soci.h"
+      #include "soci/empty/soci-empty.h"
+      #include <string>
+      using namespace soci;
+      std::string connectString = "";
+      backend_factory const &backEnd = *soci::factory_empty();
+      int main(int argc, char* argv[])
+      {
+        soci::session sql(backEnd, connectString);
+      }
+    EOS
+  
+    system ENV.cxx, "-o", "test", "test.cxx", "-std=c++11", "-L#{lib}", "-lsoci_core", "-lsoci_empty"
+    system "./test"
+  end
 end
