@@ -20,8 +20,8 @@ jobs:
 
       - run: brew test-bot --only-setup
       
-      - name: brew audit --skip-style
-        run: brew audit --formulae `ls Formula/*`
+      - name: brew audit --strict
+        run: brew audit --strict Formula/*
 
       - name: Run brew test-bot --only-formulae
         run: |
