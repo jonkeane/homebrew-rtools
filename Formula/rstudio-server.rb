@@ -3,19 +3,14 @@ class RstudioServer < Formula
   homepage "https://www.rstudio.com"
   head "https://github.com/rstudio/rstudio.git"
   stable do
-    url "https://github.com/rstudio/rstudio/archive/v1.3.959.tar.gz"
-    sha256 "5c89fe18e3d5ead0e7921c88e5fb42ed816823238e84135f5e9e3a364d35fcc1"
-    # upstream has this patch already but it is too big to be merged
+    url "https://github.com/rstudio/rstudio/archive/v1.4.1103.tar.gz"
+    sha256 "e448aaaf7ac7f4fd97197250762bfd28195c71abfd67db6f952463dea552be4c"
+    # patch the soci paths to use the brew-installed ones.
     patch :DATA
-    # upstream has this patch already, but without it building against R 4.0 fails
-    patch :p1 do
-      url "https://github.com/rstudio/rstudio/commit/3fb2397.patch?full_index=1"
-      sha256 "a537578bb053cd4832c94f8bed60c1b1545ee492367e122b4ad38b28fe736df3"
-    end
   end
 
   bottle do
-    root_url "https://brew-rtools.bintray.com/bottles-rtools"
+    root_url "https://dl.bintray.com/brew-rtools/bottles-rtools"
     cellar :any
     sha256 "394e40ce11c4d4aaeae3a1f7840b9a68bb6dece0ed7db2b44aaacbe2cdecbb25" => :catalina
   end
@@ -33,12 +28,14 @@ class RstudioServer < Formula
   if OS.linux?
     depends_on "boost-rstudio-server"
   elsif OS.mac?
-    depends_on "boost-rstudio-server" => :build
+    depends_on "boost-rstudio-server"
   end
   depends_on "cmake" => :build
   depends_on "gcc" => :build
   depends_on "openjdk" => :build
   depends_on "openssl@1.1"
+  depends_on "soci-rstudio-server"
+  depends_on "postgresql" => :recommended
   depends_on "r" => :recommended
 
   resource "dictionaries" do
@@ -53,13 +50,25 @@ class RstudioServer < Formula
 
   if OS.linux?
     resource "pandoc" do
-      url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.7.3/pandoc-2.7.3-linux.tar.gz"
-      sha256 "eb775fd42ec50329004d00f0c9b13076e707cdd44745517c8ce2581fb8abdb75"
+      url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.11.2/pandoc-2.11.2-linux-amd64.tar.gz"
+      sha256 "25e4055db5144289dc45e7c5fb3616ea5cf75f460eba337b65474d9fbc40c0fb"
     end
   elsif OS.mac?
     resource "pandoc" do
-      url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.7.3/pandoc-2.7.3-macOS.zip"
-      sha256 "fb93800c90f3fab05dbd418ee6180d086b619c9179b822ddfecb608874554ff0"
+      url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.11.2/pandoc-2.11.2-macOS.zip"
+      sha256 "e256ad5ae298fa303f55d48fd40b678367a6f34108a037ce5d76bdc6cfca6258"
+    end
+  end
+
+  if OS.linux?
+    resource "node" do
+      url "https://nodejs.org/dist/v10.19.0/node-v10.19.0-linux-x64.tar.gz"
+      sha256 "36d90bc58f0418f31dceda5b18eb260019fcc91e59b0820ffa66700772a8804b"
+    end
+  elsif OS.mac?
+    resource "node" do
+      url "https://nodejs.org/dist/v10.19.0/node-v10.19.0-darwin-x64.tar.gz"
+      sha256 "b16328570651be44213a2303c1f9515fc506e0a96a273806f71ed000e3ca3cb3"
     end
   end
 
@@ -93,21 +102,24 @@ class RstudioServer < Formula
 
     (common_dir/"dictionaries").install resource("dictionaries")
     (common_dir/"mathjax-27").install resource("mathjax")
+    (common_dir/"node/10.19.0").install resource("node")
 
     resource("pandoc").stage do
-      (common_dir/"pandoc/2.7.3/").install "bin/pandoc"
-      (common_dir/"pandoc/2.7.3/").install "bin/pandoc-citeproc"
+      (common_dir/"pandoc/2.11.2/").install "bin/pandoc"
     end
 
     mkdir "build" do
       args = ["-DRSTUDIO_TARGET=Server", "-DCMAKE_BUILD_TYPE=Release"]
+      args << "-DBoost_NO_BOOST_CMAKE=ON"
       args << "-DRSTUDIO_USE_SYSTEM_BOOST=Yes"
       args << "-DBoost_NO_SYSTEM_PATHS=On"
       args << "-DBOOST_ROOT=#{Formula["boost-rstudio-server"].opt_prefix}"
       args << "-DCMAKE_INSTALL_PREFIX=#{prefix}/rstudio-server"
       args << "-DCMAKE_CXX_FLAGS=-I#{Formula["openssl"].opt_include}"
       args << "-DRSTUDIO_CRASHPAD_ENABLED=0"
-      args << "-DCMAKE_OSX_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk" if OS.mac?
+      # this is the path to the brew-installed soci (see the patch at the end)
+      args << "-DBREW_SOCI=#{Formula["soci-rstudio-server"].lib}"
+      args << "-DCMAKE_OSX_SYSROOT=#{MacOS.sdk_path}" if OS.mac?
 
       linkerflags = "-DCMAKE_EXE_LINKER_FLAGS=-L#{Formula["openssl"].opt_lib}"
       linkerflags += " -L#{Formula["linux-pam"].opt_lib}" if OS.linux? && (build.with? "linux-pam")
@@ -183,12 +195,16 @@ end
 
 __END__
 diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
-index af791506eb..5845bdf1a0 100644
+index df54994..927d357 100644
 --- a/src/cpp/CMakeLists.txt
 +++ b/src/cpp/CMakeLists.txt
-@@ -317,0 +318 @@ endif()
-+if (NOT DEFINED RSTUDIO_CRASHPAD_ENABLED OR RSTUDIO_CRASHPAD_ENABLED)
-@@ -338,0 +340 @@ endif()
-+endif()
-@@ -527 +528,0 @@ endif()
+@@ -405,7 +405,7 @@ endif()
+
+ # find SOCI libraries
+ if(UNIX)
+-   set(SOCI_LIBRARY_DIR "${RSTUDIO_TOOLS_SOCI}/build/lib")
++   set(SOCI_LIBRARY_DIR "${BREW_SOCI}")
+    if(NOT APPLE AND RSTUDIO_USE_SYSTEM_SOCI)
+       set(SOCI_LIBRARY_DIR "/usr/lib")
+    endif()
 -
