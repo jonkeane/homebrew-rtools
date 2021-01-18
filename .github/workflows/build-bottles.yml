@@ -19,6 +19,9 @@ jobs:
       - run: brew test-bot --only-cleanup-before
 
       - run: brew test-bot --only-setup
+      
+      - name: brew audit --skip-style
+        run: brew audit --skip-style
 
       - name: Run brew test-bot --only-formulae
         run: |
