@@ -24,7 +24,7 @@ jobs:
         run: |
           mkdir bottles
           cd bottles
-          brew test-bot --only-formulae --bintray-org=brew-rtools --root-url=https://brew-rtools.bintray.com/bottles-rtools
+          brew test-bot --only-formulae --bintray-org=brew-rtools --root-url=https://dl.bintray.com/brew-rtools/bottles-rtools
 
       - name: Output brew test-bot --only-formulae failures
         if: always()
