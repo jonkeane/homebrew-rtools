@@ -1,4 +1,4 @@
-name: Build bottles
+name: PR bottle build
 
 on: pull_request
 
@@ -21,7 +21,7 @@ jobs:
       - run: brew test-bot --only-setup
       
       - name: brew audit --skip-style
-        run: brew audit --skip-style --formulae Formula/*
+        run: brew audit --formulae `ls Formula/*`
 
       - name: Run brew test-bot --only-formulae
         run: |
