@@ -21,7 +21,7 @@ jobs:
       - run: brew test-bot --only-setup
       
       - name: brew audit --skip-style
-        run: brew audit --skip-style
+        run: brew audit --skip-style --formulae Formula/*
 
       - name: Run brew test-bot --only-formulae
         run: |
