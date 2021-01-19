@@ -12,7 +12,7 @@ class RstudioServer < Formula
   bottle do
     root_url "https://dl.bintray.com/brew-rtools/bottles-rtools"
     cellar :any
-    sha256 "394e40ce11c4d4aaeae3a1f7840b9a68bb6dece0ed7db2b44aaacbe2cdecbb25" => :catalina
+    sha256 "11dcdb6e7a391bdecf0d7a38ad8f9ba507cb5ee7746b367bdb1c24b22c2b2e23" => :catalina
   end
 
   if OS.linux?
