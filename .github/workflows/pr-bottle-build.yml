@@ -35,9 +35,6 @@ jobs:
           cat bottles/steps_output.txt
           rm bottles/steps_output.txt
 
-      - name: brew audit again
-        run: brew audit --strict Formula/*
-
       - name: Upload logs
         if: failure()
         uses: actions/upload-artifact@main
