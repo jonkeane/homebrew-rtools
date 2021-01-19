@@ -23,16 +23,12 @@ class RstudioServer < Formula
     depends_on "linux-pam"
   end
 
-  depends_on "openjdk@8" => :build if ENV["CI"] && OS.linux?
   depends_on "ant" => :build
-  if OS.linux?
-    depends_on "boost-rstudio-server"
-  elsif OS.mac?
-    depends_on "boost-rstudio-server"
-  end
   depends_on "cmake" => :build
   depends_on "gcc" => :build
   depends_on "openjdk" => :build
+  depends_on "openjdk@8" => :build if ENV["CI"] && OS.linux?
+  depends_on "boost-rstudio-server"
   depends_on "openssl@1.1"
   depends_on "soci-rstudio-server"
   depends_on "postgresql" => :recommended
