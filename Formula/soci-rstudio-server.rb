@@ -47,7 +47,7 @@ class SociRstudioServer < Formula
     #     soci::session sql(backEnd, connectString);
     #   }
     # EOS
-    # 
+
     # system ENV.cxx, "-o", "test", "test.cxx", "-std=c++11", "-L#{lib}", "-lsoci_core", "-lsoci_empty"
     # system "./test"
     system "ls"
