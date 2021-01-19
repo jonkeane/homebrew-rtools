@@ -23,7 +23,7 @@ class RstudioServer < Formula
     depends_on "linux-pam"
   end
 
-  depends_on "adoptopenjdk" => :build if ENV["CI"] && OS.linux?
+  depends_on "openjdk@8" => :build if ENV["CI"] && OS.linux?
   depends_on "ant" => :build
   if OS.linux?
     depends_on "boost-rstudio-server"
