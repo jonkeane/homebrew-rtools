@@ -4,14 +4,9 @@ class RstudioServer < Formula
   head "https://github.com/rstudio/rstudio.git"
   stable do
     url "https://github.com/rstudio/rstudio/archive/refs/tags/v1.4.1717.tar.gz"
-    sha256 "5934fa1de6a277a6cb6e62249c1c5b9703af992fcf1c2a4ba6b5cf2e5d51dd51"
+    sha256 "3af234180fd7cef451aef40faac2c7b52860f14a322244c1c7aede029814d261"
     # patch the soci paths to use the brew-installed ones.
     patch :DATA
-  end
-
-  bottle do
-    root_url "https://dl.bintray.com/brew-rtools/bottles-rtools"
-    sha256 catalina: "11dcdb6e7a391bdecf0d7a38ad8f9ba507cb5ee7746b367bdb1c24b22c2b2e23"
   end
 
   if OS.linux?

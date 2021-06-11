@@ -5,11 +5,6 @@ class BoostRstudioServer < Formula
   sha256 "8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406"
   head "https://github.com/boostorg/boost.git"
 
-  bottle do
-    root_url "https://dl.bintray.com/brew-rtools/bottles-rtools"
-    sha256 catalina: "de579068de0991086410204ffbdfb180c900c16faa48734cb13753a936017e65"
-  end
-
   keg_only :versioned_formula
 
   depends_on "icu4c"
