@@ -1,6 +1,6 @@
 name: PR bottle build
 
-on: pull_request
+# on: pull_request
 
 env:
   HOMEBREW_NO_ANALYTICS: 1
@@ -19,7 +19,7 @@ jobs:
       - run: brew test-bot --only-cleanup-before
 
       - run: brew test-bot --only-setup
-      
+
       - name: brew audit --strict
         run: brew audit --strict Formula/*
 
