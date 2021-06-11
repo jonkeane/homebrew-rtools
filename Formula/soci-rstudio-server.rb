@@ -8,6 +8,11 @@ class SociRstudioServer < Formula
     url :stable
   end
 
+  bottle do
+    root_url "https://dl.bintray.com/brew-rtools/bottles-rtools"
+    sha256 "1fa3df94fb68a4f924cdf8889a7d285fa2678ccfaa56c4c2a7e943398e6c0a2d" => :catalina
+  end
+
   depends_on "cmake" => :build
   depends_on "boost-rstudio-server"
   depends_on "postgresql"
