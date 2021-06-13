@@ -3,16 +3,10 @@ class RstudioServer < Formula
   homepage "https://www.rstudio.com"
   head "https://github.com/rstudio/rstudio.git"
   stable do
-    url "https://github.com/rstudio/rstudio/archive/v1.4.1103.tar.gz"
-    sha256 "e448aaaf7ac7f4fd97197250762bfd28195c71abfd67db6f952463dea552be4c"
+    url "https://github.com/rstudio/rstudio/archive/refs/tags/v1.4.1717.tar.gz"
+    sha256 "3af234180fd7cef451aef40faac2c7b52860f14a322244c1c7aede029814d261"
     # patch the soci paths to use the brew-installed ones.
     patch :DATA
-  end
-
-  bottle do
-    root_url "https://dl.bintray.com/brew-rtools/bottles-rtools"
-    cellar :any
-    sha256 "11dcdb6e7a391bdecf0d7a38ad8f9ba507cb5ee7746b367bdb1c24b22c2b2e23" => :catalina
   end
 
   if OS.linux?
@@ -26,11 +20,11 @@ class RstudioServer < Formula
   depends_on "ant" => :build
   depends_on "cmake" => :build
   depends_on "gcc" => :build
-  depends_on "openjdk" => :build
-  depends_on "openjdk@8" => :build if ENV["CI"] && OS.linux?
+  depends_on "openjdk@8" => :build
   depends_on "boost-rstudio-server"
   depends_on "openssl@1.1"
   depends_on "soci-rstudio-server"
+  depends_on "yaml-cpp"
   depends_on "postgresql" => :recommended
   depends_on "r" => :recommended
 
@@ -46,13 +40,13 @@ class RstudioServer < Formula
 
   if OS.linux?
     resource "pandoc" do
-      url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.11.2/pandoc-2.11.2-linux-amd64.tar.gz"
+      url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.11.4/pandoc-2.11.4-linux-amd64.tar.gz"
       sha256 "25e4055db5144289dc45e7c5fb3616ea5cf75f460eba337b65474d9fbc40c0fb"
     end
   elsif OS.mac?
     resource "pandoc" do
-      url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.11.2/pandoc-2.11.2-macOS.zip"
-      sha256 "e256ad5ae298fa303f55d48fd40b678367a6f34108a037ce5d76bdc6cfca6258"
+      url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.11.4/pandoc-2.11.4-macOS.zip"
+      sha256 "13b8597860afa6ab802993a684b340be3f31f4d2a06c50b6601f9e726cf76f71"
     end
   end
 
@@ -84,6 +78,8 @@ class RstudioServer < Formula
       ENV["MAKEFLAGS"] = "-j4"
     end
 
+    ENV["JAVA_HOME"] = Formula["openjdk@8"].opt_prefix
+
     unless build.head?
       ENV["RSTUDIO_VERSION_MAJOR"] = version.to_s.split(".")[0]
       ENV["RSTUDIO_VERSION_MINOR"] = version.to_s.split(".")[1]
@@ -101,7 +97,7 @@ class RstudioServer < Formula
     (common_dir/"node/10.19.0").install resource("node")
 
     resource("pandoc").stage do
-      (common_dir/"pandoc/2.11.2/").install "bin/pandoc"
+      (common_dir/"pandoc/2.11.4/").install "bin/pandoc"
     end
 
     mkdir "build" do
@@ -113,6 +109,8 @@ class RstudioServer < Formula
       args << "-DCMAKE_INSTALL_PREFIX=#{prefix}/rstudio-server"
       args << "-DCMAKE_CXX_FLAGS=-I#{Formula["openssl"].opt_include}"
       args << "-DRSTUDIO_CRASHPAD_ENABLED=0"
+      args << "-DRSTUDIO_USE_SYSTEM_YAML_CPP=Yes"
+      args << "-DRSTUDIO_TOOLS_ROOT=#{common_dir}"
       # this is the path to the brew-installed soci (see the patch at the end)
       args << "-DBREW_SOCI=#{Formula["soci-rstudio-server"].lib}"
       args << "-DCMAKE_OSX_SYSROOT=#{MacOS.sdk_path}" if OS.mac?
