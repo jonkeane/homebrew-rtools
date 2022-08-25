@@ -3,8 +3,8 @@ class RstudioServer < Formula
   homepage "https://www.rstudio.com"
   head "https://github.com/rstudio/rstudio.git"
   stable do
-    url "https://github.com/rstudio/rstudio/archive/refs/tags/v1.4.1717.tar.gz"
-    sha256 "3af234180fd7cef451aef40faac2c7b52860f14a322244c1c7aede029814d261"
+    url "https://github.com/rstudio/rstudio/tarball/v2022.02.2+485"
+    sha256 "3bd4d5fb37ec6bac2ccbe3621907b710d9b81634a158ff0116a71737d063659e"
     # patch the soci paths to use the brew-installed ones.
     patch :DATA
   end
@@ -22,6 +22,7 @@ class RstudioServer < Formula
   depends_on "gcc" => :build
   depends_on "openjdk@8" => :build
   depends_on "boost-rstudio-server"
+  depends_on "yaml-cpp-rstudio-server"
   depends_on "openssl@1.1"
   depends_on "soci-rstudio-server"
   depends_on "yaml-cpp"
@@ -38,28 +39,19 @@ class RstudioServer < Formula
     sha256 "c56cbaa6c4ce03c1fcbaeb2b5ea3c312d2fb7626a360254770cbcb88fb204176"
   end
 
-  if OS.linux?
-    resource "pandoc" do
-      url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.11.4/pandoc-2.11.4-linux-amd64.tar.gz"
-      sha256 "25e4055db5144289dc45e7c5fb3616ea5cf75f460eba337b65474d9fbc40c0fb"
-    end
-  elsif OS.mac?
-    resource "pandoc" do
-      url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.11.4/pandoc-2.11.4-macOS.zip"
-      sha256 "13b8597860afa6ab802993a684b340be3f31f4d2a06c50b6601f9e726cf76f71"
-    end
+  resource "pandoc" do
+    url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.16.2/pandoc-2.16.2-macOS.zip"
+    sha256 "7e6b694f7402b979130ba1a7f80cee28a745b186bf9ac40058f4338398677605"
   end
 
-  if OS.linux?
-    resource "node" do
-      url "https://nodejs.org/dist/v10.19.0/node-v10.19.0-linux-x64.tar.gz"
-      sha256 "36d90bc58f0418f31dceda5b18eb260019fcc91e59b0820ffa66700772a8804b"
-    end
-  elsif OS.mac?
-    resource "node" do
-      url "https://nodejs.org/dist/v10.19.0/node-v10.19.0-darwin-x64.tar.gz"
-      sha256 "b16328570651be44213a2303c1f9515fc506e0a96a273806f71ed000e3ca3cb3"
-    end
+  resource "node" do
+    url "https://nodejs.org/dist/v14.17.5/node-v14.17.5-darwin-x64.tar.gz"
+    sha256 "2e40ab625b45b9bdfcb963ddd4d65d87ddf1dd37a86b6f8b075cf3d77fe9dc09"
+  end
+
+  resource "quarto" do
+    url "https://s3.amazonaws.com/rstudio-buildtools/quarto/0.9.80/quarto-0.9.80-macos.tar.gz"
+    sha256 "a3456b003e6890d99e01dd750d5f221259094b93f02b2ca5e2d34aa2eb9e1088"
   end
 
   def which_linux_distribution
@@ -94,10 +86,11 @@ class RstudioServer < Formula
 
     (common_dir/"dictionaries").install resource("dictionaries")
     (common_dir/"mathjax-27").install resource("mathjax")
-    (common_dir/"node/10.19.0").install resource("node")
+    (common_dir/"node/14.17.5").install resource("node")
+    (common_dir/"quarto").install resource("quarto")
 
     resource("pandoc").stage do
-      (common_dir/"pandoc/2.11.4/").install "bin/pandoc"
+      (common_dir/"pandoc/2.16.2/").install "bin/pandoc"
     end
 
     mkdir "build" do
@@ -113,6 +106,8 @@ class RstudioServer < Formula
       args << "-DRSTUDIO_TOOLS_ROOT=#{common_dir}"
       # this is the path to the brew-installed soci (see the patch at the end)
       args << "-DBREW_SOCI=#{Formula["soci-rstudio-server"].lib}"
+      # this is the path to the brew-installed yaml-cpp (see the patch at the end)
+      args << "-DYAML_CPP_INCLUDE=#{Formula["yaml-cpp-rstudio-server"].include}"
       args << "-DCMAKE_OSX_SYSROOT=#{MacOS.sdk_path}" if OS.mac?
 
       linkerflags = "-DCMAKE_EXE_LINKER_FLAGS=-L#{Formula["openssl"].opt_lib}"
@@ -188,11 +183,48 @@ end
 
 
 __END__
+diff --git a/CMakeGlobals.txt b/CMakeGlobals.txt
+index de77b8d1ee..49c92da1da 100644
+--- a/CMakeGlobals.txt
++++ b/CMakeGlobals.txt
+@@ -280,7 +280,7 @@ endif()
+ message(STATUS "Using RStudio tools root: ${RSTUDIO_TOOLS_ROOT}")
+
+ # special install directories for apple desktop
+-if (APPLE)
++if (APPLE AND RSTUDIO_DESKTOP)
+    if (RSTUDIO_ELECTRON)
+       set(RSTUDIO_INSTALL_BIN        RStudio.app/Contents/Resources/app/bin)
+       set(RSTUDIO_INSTALL_SUPPORTING RStudio.app/Contents/Resources/app)
+@@ -442,4 +442,3 @@ if(APPLE)
+    endif()
+
+ endif()
+-
 diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
-index df54994..927d357 100644
+index 2be248128a..45db514b4b 100644
 --- a/src/cpp/CMakeLists.txt
 +++ b/src/cpp/CMakeLists.txt
-@@ -405,7 +405,7 @@ endif()
+@@ -215,14 +215,15 @@ else()
+    # NOTE: defines the following CMake variables:
+    # - YAML_CPP_INCLUDE_DIR
+    # - YAML_CPP_LIBRARIES
+-   find_package(yaml-cpp REQUIRED)
++   set(YAML_CPP_INCLUDE_DIR "${YAML_CPP_INCLUDE}")
++   set(YAML_CPP_LIBRARIES   "${YAML_CPP_INCLUDE}/../lib/libyaml-cpp.a")
+ endif()
+
+-if(NOT EXISTS "${YAML_CPP_INCLUDE_DIR}")
++if(NOT EXISTS "${YAML_CPP_INCLUDE}")
+    message(FATAL_ERROR "yaml-cpp not found (re-run dependencies script to install)")
+ endif()
+
+-include_directories(SYSTEM "${YAML_CPP_INCLUDE_DIR}")
++include_directories(SYSTEM "${YAML_CPP_INCLUDE}")
+
+ # determine whether we should statically link boost. we always do this
+ # unless we are building a non-packaged build on linux (in which case
+@@ -449,7 +450,7 @@ endif()
 
  # find SOCI libraries
  if(UNIX)
@@ -201,4 +233,8 @@ index df54994..927d357 100644
     if(NOT APPLE AND RSTUDIO_USE_SYSTEM_SOCI)
        set(SOCI_LIBRARY_DIR "/usr/lib")
     endif()
+@@ -688,4 +689,3 @@ else()
+    endif()
+
+ endif()
 -
