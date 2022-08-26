@@ -1,15 +1,15 @@
 class SociRstudioServer < Formula
   desc "Database access library for C++"
   homepage "https://soci.sourceforge.io/"
-  url "https://downloads.sourceforge.net/project/soci/soci/soci-4.0.0/soci-4.0.0.zip"
-  sha256 "c7fffa74867182d9559e20c6e8d291936c3bd8cfa8c7d0c13bb2eeb09e0f318b"
+  url "https://downloads.sourceforge.net/project/soci/soci/soci-4.0.3/soci-4.0.3.zip"
+  sha256 "598abf573252caf71790af5ff15beca20af548440b610e70468edfd3c12d47b0"
   license "BSL-1.0"
   livecheck do
     url :stable
   end
 
   depends_on "cmake" => :build
-  depends_on "boost-rstudio-server"
+  depends_on "boost"
   depends_on "postgresql"
   depends_on "sqlite"
 

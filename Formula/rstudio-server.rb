@@ -3,8 +3,8 @@ class RstudioServer < Formula
   homepage "https://www.rstudio.com"
   head "https://github.com/rstudio/rstudio.git"
   stable do
-    url "https://github.com/rstudio/rstudio/tarball/v2022.02.2+485"
-    sha256 "3bd4d5fb37ec6bac2ccbe3621907b710d9b81634a158ff0116a71737d063659e"
+    url "https://github.com/rstudio/rstudio/tarball/v2022.07.1+554"
+    sha256 "541ad9c73cec7dcb691abe7929a85ad2a566d390d2d8027ff2f839aff5abee6a"
     # patch the soci paths to use the brew-installed ones.
     patch :DATA
   end
@@ -21,7 +21,7 @@ class RstudioServer < Formula
   depends_on "cmake" => :build
   depends_on "gcc" => :build
   depends_on "openjdk@8" => :build
-  depends_on "boost-rstudio-server"
+  depends_on "boost"
   depends_on "yaml-cpp-rstudio-server"
   depends_on "openssl@1.1"
   depends_on "soci-rstudio-server"
@@ -40,18 +40,18 @@ class RstudioServer < Formula
   end
 
   resource "pandoc" do
-    url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.16.2/pandoc-2.16.2-macOS.zip"
-    sha256 "7e6b694f7402b979130ba1a7f80cee28a745b186bf9ac40058f4338398677605"
+    url "https://s3.amazonaws.com/rstudio-buildtools/pandoc/2.18/pandoc-2.18-macOS.zip"
+    sha256 "55bd37ef2a3941a7af65f72e94dc8de4e9e4f179a93909d6ecc24c55a4ef4255"
   end
 
   resource "node" do
-    url "https://nodejs.org/dist/v14.17.5/node-v14.17.5-darwin-x64.tar.gz"
-    sha256 "2e40ab625b45b9bdfcb963ddd4d65d87ddf1dd37a86b6f8b075cf3d77fe9dc09"
+    url "https://nodejs.org/dist/v16.14.0/node-v16.14.0-darwin-x64.tar.gz"
+    sha256 "26702ab17903ad1ea4e13133bd423c1176db3384b8cf08559d385817c9ca58dc"
   end
 
   resource "quarto" do
-    url "https://s3.amazonaws.com/rstudio-buildtools/quarto/0.9.80/quarto-0.9.80-macos.tar.gz"
-    sha256 "a3456b003e6890d99e01dd750d5f221259094b93f02b2ca5e2d34aa2eb9e1088"
+    url "https://s3.amazonaws.com/rstudio-buildtools/quarto/0.9.230/quarto-0.9.230-macos.tar.gz"
+    sha256 "c2f465342a7d6d137966dd1df6ff82c86d96a605cce5f71cc8942ab24e9c910a"
   end
 
   def which_linux_distribution
@@ -86,7 +86,7 @@ class RstudioServer < Formula
 
     (common_dir/"dictionaries").install resource("dictionaries")
     (common_dir/"mathjax-27").install resource("mathjax")
-    (common_dir/"node/14.17.5").install resource("node")
+    (common_dir/"node/16.14.0").install resource("node")
     (common_dir/"quarto").install resource("quarto")
 
     resource("pandoc").stage do
@@ -98,7 +98,7 @@ class RstudioServer < Formula
       args << "-DBoost_NO_BOOST_CMAKE=ON"
       args << "-DRSTUDIO_USE_SYSTEM_BOOST=Yes"
       args << "-DBoost_NO_SYSTEM_PATHS=On"
-      args << "-DBOOST_ROOT=#{Formula["boost-rstudio-server"].opt_prefix}"
+      args << "-DBOOST_ROOT=#{Formula["boost"].opt_prefix}"
       args << "-DCMAKE_INSTALL_PREFIX=#{prefix}/rstudio-server"
       args << "-DCMAKE_CXX_FLAGS=-I#{Formula["openssl"].opt_include}"
       args << "-DRSTUDIO_CRASHPAD_ENABLED=0"
