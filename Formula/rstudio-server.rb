@@ -26,7 +26,7 @@ class RstudioServer < Formula
   depends_on "openssl@1.1"
   depends_on "soci-rstudio-server"
   depends_on "yaml-cpp"
-  depends_on "postgresql" => :recommended
+  depends_on "postgresql@13" => :recommended
   depends_on "r" => :recommended
 
   resource "dictionaries" do

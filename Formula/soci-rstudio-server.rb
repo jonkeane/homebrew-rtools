@@ -10,7 +10,7 @@ class SociRstudioServer < Formula
 
   depends_on "cmake" => :build
   depends_on "boost"
-  depends_on "postgresql"
+  depends_on "postgresql@13"
   depends_on "sqlite"
 
   def install
