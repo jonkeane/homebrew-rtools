@@ -3,8 +3,8 @@ class RstudioServer < Formula
   homepage "https://www.rstudio.com"
   head "https://github.com/rstudio/rstudio.git"
   stable do
-    url "https://github.com/rstudio/rstudio/tarball/v2022.07.1+554"
-    sha256 "541ad9c73cec7dcb691abe7929a85ad2a566d390d2d8027ff2f839aff5abee6a"
+    url "https://github.com/rstudio/rstudio/tarball/v2022.12.0+353"
+    sha256 "941ca00902f5a7745680cd44cd0a81ebaa29f9264ac5e67b066d51f3bc9362cf"
     # patch the soci paths to use the brew-installed ones.
     patch :DATA
   end
@@ -50,8 +50,8 @@ class RstudioServer < Formula
   end
 
   resource "quarto" do
-    url "https://s3.amazonaws.com/rstudio-buildtools/quarto/0.9.230/quarto-0.9.230-macos.tar.gz"
-    sha256 "c2f465342a7d6d137966dd1df6ff82c86d96a605cce5f71cc8942ab24e9c910a"
+    url "https://github.com/quarto-dev/quarto-cli/releases/download/v1.2.269/quarto-1.2.269-macos.tar.gz"
+    sha256 "4bf7f46ac2249ef8e78c33c988f792fe4c342599edf933c08d7cc722ea7c824d"
   end
 
   def which_linux_distribution
@@ -201,11 +201,11 @@ index de77b8d1ee..49c92da1da 100644
 
  endif()
 -
-diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
-index 2be248128a..45db514b4b 100644
+diff -git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
+index 4ff419e..21ec42c 100644
 --- a/src/cpp/CMakeLists.txt
 +++ b/src/cpp/CMakeLists.txt
-@@ -215,14 +215,15 @@ else()
+@@ -222,14 +222,15 @@ else()
     # NOTE: defines the following CMake variables:
     # - YAML_CPP_INCLUDE_DIR
     # - YAML_CPP_LIBRARIES
@@ -224,17 +224,24 @@ index 2be248128a..45db514b4b 100644
 
  # determine whether we should statically link boost. we always do this
  # unless we are building a non-packaged build on linux (in which case
-@@ -449,7 +450,7 @@ endif()
+@@ -475,7 +476,7 @@ if(UNIX)
+          message(FATAL_ERROR "Some or all SOCI libraries were not found. Ensure the SOCI dependency is installed and try again.")
+       endif()
+    else()
+-      set(SOCI_LIBRARY_DIR "${RSTUDIO_TOOLS_SOCI}/build/lib")
++      set(SOCI_LIBRARY_DIR "${BREW_SOCI}")
+       find_library(SOCI_CORE_LIB NAMES "libsoci_core.a" "soci_core" PATHS "${SOCI_LIBRARY_DIR}" NO_DEFAULT_PATH)
+       find_library(SOCI_SQLITE_LIB NAMES "libsoci_sqlite3.a" "soci_sqlite3" PATHS "${SOCI_LIBRARY_DIR}" NO_DEFAULT_PATH)
+       find_library(SOCI_POSTGRESQL_LIB NAMES "libsoci_postgresql.a" "soci_postgresql" PATHS "${SOCI_LIBRARY_DIR}" NO_DEFAULT_PATH)
+diff --git a/src/cpp/core/include/core/Thread.hpp b/src/cpp/core/include/core/Thread.hpp
+index 9ca7f33..df3a0ad 100644
+--- a/src/cpp/core/include/core/Thread.hpp
++++ b/src/cpp/core/include/core/Thread.hpp
+@@ -17,6 +17,7 @@
+ #define CORE_THREAD_HPP
 
- # find SOCI libraries
- if(UNIX)
--   set(SOCI_LIBRARY_DIR "${RSTUDIO_TOOLS_SOCI}/build/lib")
-+   set(SOCI_LIBRARY_DIR "${BREW_SOCI}")
-    if(NOT APPLE AND RSTUDIO_USE_SYSTEM_SOCI)
-       set(SOCI_LIBRARY_DIR "/usr/lib")
-    endif()
-@@ -688,4 +689,3 @@ else()
-    endif()
+ #include <queue>
++#include <set>
 
- endif()
--
+ #include <boost/utility.hpp>
+ #include <boost/function.hpp>
