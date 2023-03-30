@@ -3,8 +3,8 @@ class RstudioServer < Formula
   homepage "https://www.rstudio.com"
   head "https://github.com/rstudio/rstudio.git"
   stable do
-    url "https://github.com/rstudio/rstudio/tarball/v2022.12.0+353"
-    sha256 "941ca00902f5a7745680cd44cd0a81ebaa29f9264ac5e67b066d51f3bc9362cf"
+    url "https://github.com/rstudio/rstudio/tarball/v2023.03.0+386"
+    sha256 "295a952d22d4a3d282e93c3acbb20f5dbe01fd087bd8aa006030dbad32e917e8"
     # patch the soci paths to use the brew-installed ones.
     patch :DATA
   end
@@ -22,6 +22,8 @@ class RstudioServer < Formula
   depends_on "gcc" => :build
   depends_on "openjdk@8" => :build
   depends_on "boost"
+  depends_on "node"
+  depends_on "yarn"
   depends_on "yaml-cpp-rstudio-server"
   depends_on "openssl@1.1"
   depends_on "soci-rstudio-server"
@@ -50,8 +52,8 @@ class RstudioServer < Formula
   end
 
   resource "quarto" do
-    url "https://github.com/quarto-dev/quarto-cli/releases/download/v1.2.269/quarto-1.2.269-macos.tar.gz"
-    sha256 "4bf7f46ac2249ef8e78c33c988f792fe4c342599edf933c08d7cc722ea7c824d"
+    url "https://github.com/quarto-dev/quarto-cli/releases/download/v1.2.335/quarto-1.2.335-macos.tar.gz"
+    sha256 "939480f3d5aa4a4aafd4cc2ee7491f008683004645af5ddcb02a9e4ec3b99c47"
   end
 
   def which_linux_distribution
@@ -93,7 +95,12 @@ class RstudioServer < Formula
       (common_dir/"pandoc/2.16.2/").install "bin/pandoc"
     end
 
+    quarto_dir = buildpath/"src/gwt/lib/quarto"
+
     mkdir "build" do
+      # grab the quarto repo (in order to install panmirror from it later)
+      system "git", "clone", "--branch", "release/rstudio-cherry-blossom", "https://github.com/quarto-dev/quarto.git", quarto_dir
+
       args = ["-DRSTUDIO_TARGET=Server", "-DCMAKE_BUILD_TYPE=Release"]
       args << "-DBoost_NO_BOOST_CMAKE=ON"
       args << "-DRSTUDIO_USE_SYSTEM_BOOST=Yes"
@@ -196,12 +203,7 @@ index de77b8d1ee..49c92da1da 100644
     if (RSTUDIO_ELECTRON)
        set(RSTUDIO_INSTALL_BIN        RStudio.app/Contents/Resources/app/bin)
        set(RSTUDIO_INSTALL_SUPPORTING RStudio.app/Contents/Resources/app)
-@@ -442,4 +442,3 @@ if(APPLE)
-    endif()
-
- endif()
--
-diff -git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
+diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
 index 4ff419e..21ec42c 100644
 --- a/src/cpp/CMakeLists.txt
 +++ b/src/cpp/CMakeLists.txt
@@ -233,15 +235,3 @@ index 4ff419e..21ec42c 100644
        find_library(SOCI_CORE_LIB NAMES "libsoci_core.a" "soci_core" PATHS "${SOCI_LIBRARY_DIR}" NO_DEFAULT_PATH)
        find_library(SOCI_SQLITE_LIB NAMES "libsoci_sqlite3.a" "soci_sqlite3" PATHS "${SOCI_LIBRARY_DIR}" NO_DEFAULT_PATH)
        find_library(SOCI_POSTGRESQL_LIB NAMES "libsoci_postgresql.a" "soci_postgresql" PATHS "${SOCI_LIBRARY_DIR}" NO_DEFAULT_PATH)
-diff --git a/src/cpp/core/include/core/Thread.hpp b/src/cpp/core/include/core/Thread.hpp
-index 9ca7f33..df3a0ad 100644
---- a/src/cpp/core/include/core/Thread.hpp
-+++ b/src/cpp/core/include/core/Thread.hpp
-@@ -17,6 +17,7 @@
- #define CORE_THREAD_HPP
-
- #include <queue>
-+#include <set>
-
- #include <boost/utility.hpp>
- #include <boost/function.hpp>
